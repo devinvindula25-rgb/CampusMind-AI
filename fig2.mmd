@@ -1,0 +1,46 @@
+﻿flowchart TD
+    classDef layer fill:#f8fafc,stroke:#94a3b8,stroke-width:2px,stroke-dasharray: 5 5
+    classDef node fill:#e0f2fe,stroke:#0284c7,stroke-width:2px
+    classDef service fill:#fef3c7,stroke:#d97706,stroke-width:2px
+    classDef db fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+
+    subgraph Presentation ["📱 Presentation Layer (Expo Router Screens)"]
+        direction TB
+        subgraph Tabs ["UI Workspaces"]
+            Personal["Personal Tabs"]:::node
+            Institutional["Institutional Tabs"]:::node
+            Directory["Directory Tabs"]:::node
+        end
+    end
+
+    subgraph Service ["⚙️ Service Layer"]
+        direction LR
+        FirestoreSvc["firestore.ts"]:::service
+        GeminiSvc["gemini.ts"]:::service
+        WellnessSvc["wellnessAI.ts"]:::service
+        CalendarSvc["calendarSync.ts"]:::service
+        NotificationSvc["notificationService.ts"]:::service
+    end
+
+    subgraph Data ["☁️ Data Layer"]
+        direction LR
+        FirebaseAuth["Firebase Auth"]:::db
+        Firestore["Firestore (13+ Collections)"]:::db
+        GeminiAPI["Google Gemini API"]:::db
+    end
+
+    %% Flow between Presentation and Service
+    Personal --> Service
+    Institutional --> Service
+    Directory --> Service
+
+    %% Flow between Service and Data
+    FirestoreSvc <-->|"Real-time Read/Write"| Firestore
+    GeminiSvc <-->|"JSON Prompts/Responses"| GeminiAPI
+    WellnessSvc -.->|"Computed Scores"| FirestoreSvc
+    CalendarSvc -.->|"Sync Events"| FirestoreSvc
+    NotificationSvc -.->|"Triggers"| FirestoreSvc
+    
+    Service -.-|"Validate Session"| FirebaseAuth
+    
+    class Presentation,Service,Data layer

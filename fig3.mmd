@@ -1,0 +1,33 @@
+﻿flowchart TD
+    classDef state fill:#fef08a,stroke:#a16207,stroke-width:2px,color:#000
+    classDef nav fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#000
+    classDef tab fill:#f8fafc,stroke:#94a3b8,stroke-width:1px,color:#000
+
+    Root["Root Layout (_layout.tsx)"]:::nav --> TabBar["Bottom Tab Navigator ((tabs)/_layout.tsx)"]:::nav
+    
+    State(("SettingsContext\n(activeWorkspace)")):::state -.->|"Injects State"| TabBar
+    
+    TabBar -->|"workspace == 'personal'"| PersonalTabs["Personal Workspace"]:::nav
+    TabBar -->|"workspace == 'institutional'"| InstTabs["Institutional Workspace"]:::nav
+    TabBar -->|"workspace == 'directory'"| DirTabs["Directory Workspace"]:::nav
+    
+    subgraph Personal [Personal Tabs shown, others hidden]
+        PT1["Dashboard\n(href: '/')"]:::tab
+        PT2["Planner\n(href: '/planner')"]:::tab
+        PT3["Well-being\n(href: '/burnout')"]:::tab
+    end
+    
+    subgraph Institutional [Institutional Tabs shown, others hidden]
+        IT1["IQA Hub\n(href: '/institutional')"]:::tab
+        IT2["Accreditation\n(href: '/accreditation')"]:::tab
+        IT3["Audits\n(href: '/audits')"]:::tab
+    end
+    
+    subgraph Directory [Directory Tabs shown, others hidden]
+        DT1["Staff Search\n(href: '/directory')"]:::tab
+        DT2["Publications\n(href: '/publications')"]:::tab
+    end
+
+    PersonalTabs --> Personal
+    InstTabs --> Institutional
+    DirTabs --> Directory
